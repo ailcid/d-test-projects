@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Appointment Booking</title>
   <link rel="stylesheet" href="styles.css">
+  
+  <!-- Include Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
 </head>
 <body>
   <div class="container">
@@ -33,5 +37,56 @@
       <button type="submit" class="submit-btn">Book Appointment</button>
     </form>
   </div>
+
+  <script>
+    // Firebase configuration (replace with your Firebase project's config)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database(app);
+
+    // Get the form element
+    const form = document.getElementById('appointment-form');
+
+    // Handle form submission
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Get the values from the form
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+
+      // Prepare the data object
+      const appointmentData = {
+        name: name,
+        email: email,
+        date: date,
+        time: time
+      };
+
+      // Push the data to Firebase Realtime Database
+      const appointmentsRef = database.ref('appointments');
+      appointmentsRef.push(appointmentData)
+        .then(() => {
+          alert('Appointment booked successfully!');
+          form.reset();  // Reset the form after successful submission
+        })
+        .catch((error) => {
+          console.error('Error booking appointment:', error);
+          alert('There was an error booking your appointment.');
+        });
+    });
+  </script>
 </body>
 </html>
